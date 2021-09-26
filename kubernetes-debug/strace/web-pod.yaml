@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web
+  labels:
+    app: web
+spec:
+  containers:
+  - name: web
+    image: kshuleshov/otus-kuber-2020-04_kubernetes-intro_web
+    livenessProbe:
+      tcpSocket:
+        port: 8000
+    readinessProbe:
+      httpGet:
+        path: /index.html
+        port: 8000
+    volumeMounts:
+    - name: app
+      mountPath: /app
+  initContainers:
+  - name: init
+    image: alpine
+    command: ['sh', '-c', 'echo "Hello, world!" > /app/index.html']
+    volumeMounts:
+    - name: app
+      mountPath: /app
+  volumes:
+  - name: app
+    emptyDir: {}
